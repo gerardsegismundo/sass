@@ -1,0 +1,302 @@
+/* 
+  CLIP PATH MAKER:
+  https://bennettfeely.com/clippy/
+
+  VIDEO COVERS SITE:
+  coverr.co
+
+  test site for responsive design
+  sizzy.com
+
+  when using modern css features
+  caniuse.com
+*/
+
+// - Centering an element
+.text-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+div {
+  display: table;
+  display: table-cell;
+  vertical-align: middle / top / bottom;
+
+  backface-visibility: hidden;
+  // fixes animation glitch
+
+  shape-outside: circle(50% at 50% 50%);
+  // requires float, width, height properties
+
+  filter: blur(3px) brightness(80%);
+  // other property/value: contrast, invert, drop-shadow, sepia, etc...
+
+  transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  //  transition-timing-function
+  //  https://easings.net/en or cubic-bezier.com
+
+  // --
+  object-fit: cover;
+  object-fit: fill;
+  // fills in everyting, not maintaining its aspect ration
+
+  overflow: hidden;
+  // - fix overlap border-radius.
+
+  column-count: 2;
+  column-gap: 4rem;
+  column-rule: 1px solid $color-grey-light-2;
+
+  hyphens: auto;
+
+  // -- PREFIX --
+  -moz-column-count: 2;
+  -moz-column-gap: 4rem;
+  -moz-column-rule: 1px solid $color-grey-light-2;
+  -moz-hyphens: auto;
+  -ms-hyphens: auto;
+  -webkit-hyphens: auto;
+  // ---
+
+  //  --
+  &__input:placeholder-shown + &__ {
+    display: none;
+  }
+  //  - Adjacent sibling selector
+  &__radio-input:checked ~ &__radio-label &__radio-button::after {
+    display: none;
+  }
+  //  - Universal sibling selector
+  // --
+
+  &__checkbox:checked + &__button &__icon {
+    display: none;
+  }
+  // - if checkbox is checked, we select its sibling(__button) then the child(__icon)
+
+  ::selection {
+    background-color: $color-primary;
+    color: $color-white;
+  }
+}
+
+// --
+.u-margin-top-huge {
+  margin-top: 10rem !important;
+  //  - regular practice adding important on utility classes
+}
+
+// --
+.story {
+  transform: skewX(-12deg);
+  // - An element can only take one transform propery.
+
+  &__shape {
+    transform: translateX(-3rem) skewX(12deg);
+  }
+
+  &__text {
+    transform: skewX(12deg);
+  }
+
+  // BROWSERS COMPATIBILITY --------------------------
+
+  // currently works only in safari
+  /*   -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px); */
+
+  // if browser supports then use it
+  @supports (-webkit-backdrop-filter: blur(10px)) or
+    (backdrop-filter: blur(10px)) {
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+
+  @media (min-resolution: 192dpi) and (mid-width: 600px),
+    // - for safari - or atleast 2x (-webkit-min-device-pixel-ration: 2) and (mid-width: 600px),
+    (min-width: 2000px) {
+    background-image: linear-gradient(
+        to right bottom,
+        rgba($color-primary-light, 0.8),
+        rgba($color-primary-dark, 0.8)
+      ),
+      url('../img/hero.jpg');
+  }
+
+  // if clip-path is supported
+  @supports (clip-path: polygon(0 0)) or (-webkit-clip-path: (0 0)) {
+    clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+    -webkit-clip-path: polygon(0 0, 100% 0, 100% 75vh, 0 100%);
+    height: 95vh;
+  }
+
+  &__shape {
+    border-radius: 50%;
+
+    // if clip-path is supported
+    @supports (clip-path: polygon(0 0)) or (-webkit-clip-path: (0 0)) {
+      -webkit-clip-path: circle(50% at 50% 50%);
+      clip-path: circle(50% at 50% 50%);
+
+      -webkit-shape-outside: circle(50% at 50% 50%);
+      shape-outside: circle(50% at 50% 50%);
+
+      border-radius: none;
+    }
+  }
+  // -----------------------------------------------------------------
+}
+// --
+
+// --
+.btn {
+  &, // so that it can also be applied to <button> as well...
+  &:link,
+  &:visited {
+    display: none;
+  }
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 1rem 2rem rgba($color-black, 0.2);
+
+    &::after {
+      transform: scaleX(1.5) scaleY(1.6);
+      opacity: 0;
+    }
+  }
+
+  &:active,
+  &:focus {
+    transform: translateY(-1px);
+    box-shadow: 0 0.5rem 1rem rgba($color-black, 0.2);
+  }
+}
+
+// --
+// @mixin, $breakpoint, content directives
+// sample:
+@mixin respond-phone {
+  @media (max-width: 600px) {
+    @content;
+  }
+}
+
+// use:
+@include respond-phone {
+  font-size: 50%;
+}
+
+/*
+  $breakpoint argument choices
+  - phone
+  - tab-properties
+  - tab-land
+  - big-desktop
+
+  1em = 16px
+*/
+
+@mixin respond($breakpoint) {
+  @if $breakpoint == phone {
+    @media (max-width: 37.5em) {
+      @content;
+    } //                600px
+  }
+  @if $breakpoint == tab-port {
+    @media (max-width: 56.25em) {
+      @content;
+    } //                900px
+  }
+  @if $breakpoint == tab-land {
+    @media (max-width: 75em) {
+      @content;
+    } //                1200px
+  }
+  @if $breakpoint == big-desktop {
+    @media (max-width: 112.5em) {
+      @content;
+    } //                1800px
+  }
+}
+//
+
+// use:
+@include respond(phone) {
+  font-size: 50%;
+}
+
+/** --- IMAGES ------------------------------------------------ RESPONSIVE
+* RESPONSIVE
+* srcset - DENSITY AND RESOLUTION SWITCHING
+'srcset' -gives browser choice to choose best 
+  <img
+    srcset="img/logo-green-1x.png 1x, img/logo-green-2x.png logo-green-2x"
+    class="footer__logo"
+    alt="Full logo"
+  />
+
+  <picture class="footer__logo">
+    <source
+      srcset="
+        img/logo-green-small-1x.png 1x,
+        img/logo-green-small-2x.png 2x
+      "
+      media="(maxwidth: 37.5em)"
+    />
+    if (larger than 37.5) browser user the img set
+    <img
+      srcset="img/logo-green-1x.png 1x, img/logo-green-2x.png logo-green-2x"
+      alt="Full logo"
+    />
+  </picture>
+
+  <img
+    srcset="img/nat-1.jpg 300w, img/nat-1-large.jpg 1000w"
+    sizes="(max -width: 900px) 20vw, (max-width: 600px) 30vw, 300px"
+    src="img/nat-1-large.jpg"         // in case they use old browser that don't support srcset and sizes
+              
+  />
+
+  171 width of the image
+  
+  171 / 900 = .19 = 20% = 20% of the viewport width
+  171/600 = 0.285 = 30vw
+  
+  approx 300px default size if none condition apply
+*/
+
+// CSS
+.header {
+  background-image: linear-gradient(
+      to right bottom,
+      rgba($color-primary-light, 0.8),
+      rgba($color-primary-dark, 0.8)
+    ),
+    url('../img/hero-small.jpg');
+
+  // If the resoultion is higher > 192 dots per inch ( multiple condition )
+  // @media (min-resolution: 192dpi)  {
+  // @media (min-resolution: 192dpi) and (mid-width: 600px) {
+  // comma(,) basically means or.
+  // @media (min-resolution: 192dpi) and (mid-width: 600px), (min-width: 2000px) {
+  // 600 px convert to em 600/16 = 37.5em, 2000/16 = 125em // media queries is always in em
+  @media (min-resolution: 192dpi) and (mid-width: 600px), (min-width: 125em) {
+    background-image: linear-gradient(
+        to right bottom,
+        rgba($color-primary-light, 0.8),
+        rgba($color-primary-dark, 0.8)
+      ),
+      url('../img/hero.jpg');
+  }
+
+  // or using a device cant hover
+  // opposite = (hover: hover)
+  @media only screend and (max-width: 56.25em), only screen and (hover: none) {
+  }
+}
